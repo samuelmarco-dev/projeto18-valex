@@ -4,26 +4,28 @@ import Cryptr from 'cryptr';
 
 import { TransactionTypes } from '../repositories/cardRepository.js';
 import { Employee } from './../repositories/employeeRepository.js';
+import { CardInsertData } from '../repositories/cardRepository.js';
 import * as cardRepository from '../repositories/cardRepository.js';
 
 async function createCard(employee: Employee, type: TransactionTypes) {
-    const cardExists = await cardRepository.findByTypeAndEmployeeId(type, employee.id);
-    if(cardExists) throw {
+    const cardTypeExists = await cardRepository.findByTypeAndEmployeeId(type, employee.id);
+    if(cardTypeExists) throw {
         type: "CardAlreadyExists",
         message: `Card already exists for ${type} transactions`
     }
-    const dataCard = createDiceOfCard(employee, type);
+
+    const {id, fullName} = employee;
+    const dataCard = createDiceOfCard(id, fullName, type);
 
     await cardRepository.insert(dataCard);
 }
 
-function createDiceOfCard(employee: Employee, type: TransactionTypes) {
-    const {id: employeeId, fullName} = employee;
+function createDiceOfCard(id: number, fullName: string, type: TransactionTypes) {
     const cryptr = new Cryptr(process.env.CRYPTR_SECRET);
     const cvv = faker.finance.creditCardCVV();
 
-    const cardDice = {
-        employeeId: employeeId,
+    const cardDice: CardInsertData = {
+        employeeId: id,
         number: faker.finance.creditCardNumber(),
         cardholderName: generateHolderName(fullName),
         securityCode: cryptr.encrypt(cvv),
