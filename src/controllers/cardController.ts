@@ -10,3 +10,7 @@ export async function createCardWithApiKey(req: Request, res: Response){
     await cardService.createCard(employee, typeCard);
     res.sendStatus(201);
 }
+
+export async function activeCardWithPassword(req: Request, res: Response){
+
+}

@@ -5,7 +5,7 @@ import * as employeeRepository from "../repositories/employeeRepository.js"
 export async function checkUserExists(req: Request, res: Response, next: NextFunction){
     const { employeeId }: { employeeId: number } = req.body;
     if(!employeeId){
-        return res.status(422).send('Missing employeeId');
+        return res.status(400).send('Missing employeeId');
     }
 
     const employeeFound = await employeeRepository.findById(employeeId);

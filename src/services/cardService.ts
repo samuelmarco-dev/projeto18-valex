@@ -1,6 +1,8 @@
 import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
 import Cryptr from 'cryptr';
+import dotenv from 'dotenv';
+dotenv.config();
 
 import { TransactionTypes } from '../repositories/cardRepository.js';
 import { Employee } from './../repositories/employeeRepository.js';
