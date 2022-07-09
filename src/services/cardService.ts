@@ -137,6 +137,18 @@ function verifyEqualityPassword(password: string, passwordDecrypted: string){
 }
 
 async function getInformationDataOfCard(card: Card) {
+    const date = dayjs().format('MM/YYYY');
+    const verifyCard = !card.password || card.isBlocked;
+
+    if(verifyCard) throw {
+        type: "CardNotActive",
+        message: "Card not activated yet"
+    }
+    if(date > card.expirationDate) return {
+        cardExpirationDate: card.expirationDate,
+        cardExpiration: true
+    }
+
     const transacionsCard: PaymentWithBusinessName[] = await paymentRepository.findByCardId(card.id);
     const rechargesCard: Recharge[] = await rechargeRepository.findByCardId(card.id);
     const balangeTotal = calculeTotalCardBalance(transacionsCard, rechargesCard);
