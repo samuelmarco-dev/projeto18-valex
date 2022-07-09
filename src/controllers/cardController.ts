@@ -24,3 +24,23 @@ export async function activeCardWithPassword(req: Request, res: Response){
     await cardService.activePasswordCardId(card, password, cvv);
     res.sendStatus(200);
 }
+
+export async function applyBlockCardId(req: Request, res: Response){
+    const { card } = res.locals;
+    const { cardId, password }: {cardId: number, password: string} = req.body;
+
+    if(!cardId) return res.status(400).send('Missing cardId');
+    if(card.id !== cardId) return res.status(401).send('Card identifiers do not match');
+
+    await cardService.blockCard(card, password);
+}
+
+export async function applyUnblockCardId(req: Request, res: Response){
+    const { card } = res.locals;
+    const { cardId, password }: {cardId: number, password: string} = req.body;
+
+    if(!cardId) return res.status(400).send('Missing cardId');
+    if(card.id !== cardId) return res.status(401).send('Card identifiers do not match');
+
+    await cardService.unblockCard();
+}
