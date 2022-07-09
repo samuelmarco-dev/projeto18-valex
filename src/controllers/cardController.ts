@@ -46,3 +46,13 @@ export async function applyUnlockCardId(req: Request, res: Response){
     await cardService.unlockCard(card, password);
     res.sendStatus(200);
 }
+
+export async function getBalanceAndTransactions(req: Request, res: Response){
+    const { card } = res.locals;
+    const { id } = req.params;
+
+    if(card.id !== Number(id)) return res.status(401).send('Card identifiers do not match');
+
+    const balanceTotal = await cardService.getInformationDataOfCard(card);
+    res.status(200).send(balanceTotal);
+}

@@ -4,10 +4,14 @@ import Cryptr from 'cryptr';
 import dotenv from 'dotenv';
 dotenv.config();
 
+import * as cardRepository from '../repositories/cardRepository.js';
+import * as paymentRepository from '../repositories/paymentRepository.js';
+import * as rechargeRepository from '../repositories/rechargeRepository.js';
 import { TransactionTypes } from '../repositories/cardRepository.js';
 import { Employee } from './../repositories/employeeRepository.js';
 import { CardInsertData, CardUpdateData, Card } from '../repositories/cardRepository.js';
-import * as cardRepository from '../repositories/cardRepository.js';
+import { PaymentWithBusinessName, Payment } from '../repositories/paymentRepository.js';
+import { Recharge } from '../repositories/rechargeRepository.js';
 
 async function createCard(employee: Employee, type: TransactionTypes) {
     const cardTypeExists = await cardRepository.findByTypeAndEmployeeId(type, employee.id);
@@ -132,11 +136,40 @@ function verifyEqualityPassword(password: string, passwordDecrypted: string){
     return true;
 }
 
+async function getInformationDataOfCard(card: Card) {
+    const transacionsCard: PaymentWithBusinessName[] = await paymentRepository.findByCardId(card.id);
+    const rechargesCard: Recharge[] = await rechargeRepository.findByCardId(card.id);
+    const balangeTotal = calculeTotalCardBalance(transacionsCard, rechargesCard);
+
+    const dataCard: {
+        balance: number,
+        transactions: PaymentWithBusinessName[],
+        recharges: Recharge[]
+    } = {
+        balance: balangeTotal,
+        transactions: transacionsCard,
+        recharges: rechargesCard
+    }
+    return dataCard;
+}
+
+function calculeTotalCardBalance(transactions: any[], recharges: any[]) {
+    const spent: number = transactions.reduce((total: number, transaction: Payment) => {
+        return total + transaction.amount;
+    }, 0);
+    const received: number = recharges.reduce((total: number, recharge: Recharge)=> {
+        return total + recharge.amount;
+    }, 0);
+
+    return (received - spent);
+}
+
 const cardService = {
     createCard,
     activePasswordCardId,
     blockCard,
-    unlockCard
+    unlockCard,
+    getInformationDataOfCard
 }
 
 export default cardService;
