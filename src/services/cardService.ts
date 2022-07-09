@@ -42,7 +42,7 @@ function createDiceOfCard(id: number, fullName: string, type: TransactionTypes) 
 }
 
 function generateHolderName(fullname: string){
-    const arrName = fullname.split(' ');
+    const arrName: string[] = fullname.split(' ');
     const firstName = arrName[0];
     const lastName = arrName.at(-1);
 
@@ -55,9 +55,9 @@ function generateHolderName(fullname: string){
     for(let i: number = 0; i < names.length; i++){
         if(!names[i]) continue;
         if(i === 0 || i === names.length - 1){
-            holderName.push(names[i].toLocaleUpperCase());
+            holderName.push(names[i].toUpperCase());
         }else{
-            holderName.push(names[i].charAt(0).toLocaleUpperCase());
+            holderName.push(names[i].charAt(0).toUpperCase());
         }
     }
     return holderName.join(' ');
