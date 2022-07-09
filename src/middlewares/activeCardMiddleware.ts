@@ -6,7 +6,10 @@ import { Card } from "../repositories/cardRepository.js";
 
 export async function validateActiveCard(req: Request, res: Response, next: NextFunction){
     const { cardId, cvv }: {cardId: number, cvv: string} = req.body;
+    const { id } = req.params;
+
     if(!cardId || !cvv) return res.status(400).send('Missing cardId or cvv');
+    if(cardId !== Number(id)) return res.status(400).send('Card identifiers do not match');
 
     const cardFound: Card = await cardRepository.findById(cardId);
     if(!cardFound) return res.status(404).send('Card not found');
