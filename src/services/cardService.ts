@@ -32,7 +32,7 @@ function createDiceOfCard(id: number, fullName: string, type: TransactionTypes) 
 
     const cardDice: CardInsertData = {
         employeeId: id,
-        number: faker.finance.creditCardNumber(),
+        number: faker.finance.creditCardNumber('63[7-9]#-####-####-###L'),
         cardholderName: generateHolderName(fullName),
         securityCode: cryptr.encrypt(cvv),
         expirationDate: dayjs().add(5, 'year').format('MM/YYYY'),
