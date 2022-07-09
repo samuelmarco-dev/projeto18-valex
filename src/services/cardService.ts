@@ -92,14 +92,15 @@ async function activePasswordCardId(card: Card, password: string, code: string) 
 
 async function blockCard(card: Card, password: string){
     const date = dayjs().format('MM/YYYY');
-    const cryptr = new Cryptr(process.env.CRYPTR_SECRET);
-    const passwordDecrypted: string = cryptr.decrypt(card.password);
-
     const verifyBlock = date > card.expirationDate || card.isBlocked || !card.password;
+
     if(verifyBlock) throw {
         type: "CardNotCanBeBlocked",
         message: "Card not can be blocked"
     }
+
+    const cryptr = new Cryptr(process.env.CRYPTR_SECRET);
+    const passwordDecrypted = cryptr.decrypt(card.password);
     verifyEqualityPassword(password, passwordDecrypted);
 
     const cardBlock: CardUpdateData = {
@@ -111,14 +112,15 @@ async function blockCard(card: Card, password: string){
 
 async function unlockCard(card: Card, password: string){
     const date = dayjs().format('MM/YYYY');
-    const cryptr = new Cryptr(process.env.CRYPTR_SECRET);
-    const passwordDecrypted: string = cryptr.decrypt(card.password);
-
     const verifyUnlock = date > card.expirationDate || !card.isBlocked || !card.password;
+
     if(verifyUnlock) throw {
         type: "CardNotCanBeUnlocked",
         message: "Card not can be unlocked"
     }
+
+    const cryptr = new Cryptr(process.env.CRYPTR_SECRET);
+    const passwordDecrypted: string = cryptr.decrypt(card.password);
     verifyEqualityPassword(password, passwordDecrypted);
 
     const cardUnlock: CardUpdateData = {

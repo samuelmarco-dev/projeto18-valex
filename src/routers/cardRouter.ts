@@ -22,7 +22,7 @@ cardRouter.post('/card/active/:id', schemaValidation(schemaActiveCard), validate
         cartões em que a senha está correta
 */
 cardRouter.get('/card/balance/:id', authCardIsActive, getBalanceAndTransactions);
-cardRouter.put('/card/block/:id', schemaValidation(schemaBlockUnblockCard), authCardIsActive, applyBlockCardId);
+cardRouter.put('/card/lock/:id', schemaValidation(schemaBlockUnblockCard), authCardIsActive, applyBlockCardId);
 cardRouter.put('/card/unlock/:id', schemaValidation(schemaBlockUnblockCard), authCardIsActive, applyUnlockCardId);
 
 export default cardRouter;
