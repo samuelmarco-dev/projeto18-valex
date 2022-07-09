@@ -15,8 +15,12 @@ export async function createCardWithApiKey(req: Request, res: Response){
 
 export async function activeCardWithPassword(req: Request, res: Response){
     const { card } = res.locals;
-    const { cardId, cvv, password }: {cardId: number, cvv: string, password: string} = req.body;
+    const { cardId, cvv, password, confirmPassword }:
+    { cardId: number, cvv: string, password: string, confirmPassword: string } = req.body;
 
-    await cardService.activePasswordCardId(cardId, password, card, cvv);
+    if(password !== confirmPassword) return res.status(422).send("Password and confirm password are not the same");
+    if(card.id !== cardId) return res.sendStatus(401);
+
+    await cardService.activePasswordCardId(card, password, cvv);
     res.sendStatus(200);
 }

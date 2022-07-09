@@ -6,7 +6,7 @@ dotenv.config();
 
 import { TransactionTypes } from '../repositories/cardRepository.js';
 import { Employee } from './../repositories/employeeRepository.js';
-import { CardInsertData } from '../repositories/cardRepository.js';
+import { CardInsertData, CardUpdateData, Card } from '../repositories/cardRepository.js';
 import * as cardRepository from '../repositories/cardRepository.js';
 
 async function createCard(employee: Employee, type: TransactionTypes) {
@@ -63,15 +63,27 @@ function generateHolderName(fullname: string){
     return holderName.join(' ');
 }
 
-async function activePasswordCardId(cardId: number, password: string, card: any, code: string) {
+async function activePasswordCardId(card: Card, password: string, code: string) {
     const cryptr = new Cryptr(process.env.CRYPTR_SECRET);
-    const cvvDecrypt: string = cryptr.decrypt(card.securityCode);
-    if(code !== cvvDecrypt) throw {
+    const cvvDecrypted: string = cryptr.decrypt(card.securityCode);
+
+    if(code !== cvvDecrypted) throw {
         type: "InvalidCode",
         message: "Invalid code CVV"
     }
+    if(password.length !== 4) throw {
+        type: "InvalidPassword",
+        message: "Invalid password"
+    }
 
-    await cardRepository.update(cardId, {isBlocked: false, password});
+    const passwordEncrypted: string = cryptr.encrypt(password);
+    const cardUpdated: CardUpdateData = {
+        ...card,
+        password: passwordEncrypted,
+        originalCardId: card.id,
+        isBlocked: false
+    }
+    await cardRepository.update(card.id, cardUpdated);
 }
 
 const cardService = {

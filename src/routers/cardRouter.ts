@@ -11,7 +11,7 @@ import schemaActiveCard from '../models/schemaActiveCard.js';
 const cardRouter = Router();
 
 cardRouter.post('/card/create', schemaValidation(schemaCreateCard), checkUserExists, authKeyCompany, createCardWithApiKey);
-cardRouter.post('/card/active/:id', schemaValidation(schemaActiveCard), checkUserExists, validateActiveCard, activeCardWithPassword);
+cardRouter.post('/card/active/:id', schemaValidation(schemaActiveCard), validateActiveCard, activeCardWithPassword);
 cardRouter.get('/cards/:employeeId', );
 cardRouter.post('/card/balance/transactions/:id', );
 cardRouter.post('/card/block/:id', );
