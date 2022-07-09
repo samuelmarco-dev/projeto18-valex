@@ -35,7 +35,7 @@ function createDiceOfCard(id: number, fullName: string, type: TransactionTypes) 
         password: null,
         isVirtual: false,
         originalCardId: null,
-        isBlocked: false,
+        isBlocked: true,
         type: type
     };
     return cardDice;
@@ -63,8 +63,20 @@ function generateHolderName(fullname: string){
     return holderName.join(' ');
 }
 
+async function activePasswordCardId(cardId: number, password: string, card: any, code: string) {
+    const cryptr = new Cryptr(process.env.CRYPTR_SECRET);
+    const cvvDecrypt: string = cryptr.decrypt(card.securityCode);
+    if(code !== cvvDecrypt) throw {
+        type: "InvalidCode",
+        message: "Invalid code CVV"
+    }
+
+    await cardRepository.update(cardId, {isBlocked: false, password});
+}
+
 const cardService = {
-    createCard
+    createCard,
+    activePasswordCardId
 }
 
 export default cardService;
