@@ -33,14 +33,16 @@ export async function applyBlockCardId(req: Request, res: Response){
     if(card.id !== cardId) return res.status(401).send('Card identifiers do not match');
 
     await cardService.blockCard(card, password);
+    res.sendStatus(200);
 }
 
-export async function applyUnblockCardId(req: Request, res: Response){
+export async function applyUnlockCardId(req: Request, res: Response){
     const { card } = res.locals;
     const { cardId, password }: {cardId: number, password: string} = req.body;
 
     if(!cardId) return res.status(400).send('Missing cardId');
     if(card.id !== cardId) return res.status(401).send('Card identifiers do not match');
 
-    await cardService.unblockCard();
+    await cardService.unlockCard(card, password);
+    res.sendStatus(200);
 }

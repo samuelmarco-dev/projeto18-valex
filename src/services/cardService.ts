@@ -96,11 +96,7 @@ async function blockCard(card: Card, password: string){
         type: "CardNotCanBeBlocked",
         message: "Card not can be blocked"
     }
-
-    if(password !== passwordDecrypted) throw{
-        type: "InvalidPasswordCard",
-        message: "Invalid password"
-    }
+    verifyEqualityPassword(password, passwordDecrypted);
 
     const cardBlock: CardUpdateData = {
         ...card,
@@ -109,15 +105,38 @@ async function blockCard(card: Card, password: string){
     await cardRepository.update(card.id, cardBlock);
 }
 
-async function unblockCard(){
+async function unlockCard(card: Card, password: string){
+    const date = dayjs().format('MM/YYYY');
+    const cryptr = new Cryptr(process.env.CRYPTR_SECRET);
+    const passwordDecrypted: string = cryptr.decrypt(card.password);
 
+    const verifyUnlock = date > card.expirationDate || !card.isBlocked || !card.password;
+    if(verifyUnlock) throw {
+        type: "CardNotCanBeUnlocked",
+        message: "Card not can be unlocked"
+    }
+    verifyEqualityPassword(password, passwordDecrypted);
+
+    const cardUnlock: CardUpdateData = {
+        ...card,
+        isBlocked: false
+    }
+    await cardRepository.update(card.id, cardUnlock);
+}
+
+function verifyEqualityPassword(password: string, passwordDecrypted: string){
+    if(password !== passwordDecrypted) throw{
+        type: "InvalidPasswordCard",
+        message: "Invalid password"
+    }
+    return true;
 }
 
 const cardService = {
     createCard,
     activePasswordCardId,
     blockCard,
-    unblockCard
+    unlockCard
 }
 
 export default cardService;

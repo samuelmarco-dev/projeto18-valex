@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { activeCardWithPassword, applyBlockCardId, applyUnblockCardId, createCardWithApiKey } from '../controllers/cardController.js';
+import { activeCardWithPassword, applyBlockCardId, applyUnlockCardId, createCardWithApiKey } from '../controllers/cardController.js';
 import { authKeyCompany } from '../middlewares/authKeyMiddleware.js';
 import { checkUserExists } from '../middlewares/verifyUserMiddleware.js';
 import { validateActiveCard } from '../middlewares/activeCardMiddleware.js';
@@ -23,6 +23,6 @@ cardRouter.put('/card/active/:id', schemaValidation(schemaActiveCard), validateA
 */
 cardRouter.get('/card/balance/:id', authCardIsActive, );
 cardRouter.post('/card/block/:id', schemaValidation(schemaBlockUnblockCard), authCardIsActive, applyBlockCardId);
-cardRouter.post('/card/unlock/:id', schemaValidation(schemaBlockUnblockCard), authCardIsActive, applyUnblockCardId);
+cardRouter.post('/card/unlock/:id', schemaValidation(schemaBlockUnblockCard), authCardIsActive, applyUnlockCardId);
 
 export default cardRouter;
