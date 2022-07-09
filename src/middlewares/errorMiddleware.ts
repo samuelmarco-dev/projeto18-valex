@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 
 export async function handleError(err: any, req: Request, res: Response, next: NextFunction){
+    console.log('inicio handleError');
+    console.log('err', err);
+
     if(err){
         const verify = err.type === 'InvalidCode' || err.type === 'InvalidPassword' || err.type === 'InvalidPasswordCard' ||
         err.type === 'CardNotActive';
