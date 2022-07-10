@@ -56,3 +56,14 @@ export async function getBalanceAndTransactions(req: Request, res: Response){
     const balanceTotal = await cardService.getInformationDataOfCard(card);
     res.status(200).send(balanceTotal);
 }
+
+export async function getInformationFromEachUserCard(req: Request, res: Response){
+    const { employee } = res.locals;
+    const { employeeId } = req.params;
+    const { passwords } = req.body;
+
+    if(employee.id !== Number(employeeId)) return res.status(401).send('Employee identifiers do not match');
+
+    const cards = await cardService.getInformationCardWithSafety(passwords, employee);
+    res.status(200).send(cards);
+}

@@ -186,12 +186,20 @@ export function calculeTotalCardBalance(transactions: any[], recharges: any[]) {
     return (received - spent);
 }
 
+async function getInformationCardWithSafety(allInformations: any[], employee: Employee) {
+    console.log('employee', employee);
+    console.log('array', allInformations);
+
+    return allInformations;
+}
+
 const cardService = {
     createCard,
     activePasswordCardId,
     blockCard,
     unlockCard,
-    getInformationDataOfCard
+    getInformationDataOfCard,
+    getInformationCardWithSafety
 }
 
 export default cardService;
