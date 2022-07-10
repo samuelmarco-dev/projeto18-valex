@@ -6,7 +6,8 @@ export async function handleError(err: any, req: Request, res: Response, next: N
 
     if(err){
         const verify = err.type === 'InvalidCode' || err.type === 'InvalidPassword' || err.type === 'InvalidPasswordCard' ||
-        err.type === 'CardNotActive' || err.type === 'CardNotActiveOrExpired';
+        err.type === 'CardNotActive' || err.type === 'CardNotActiveOrExpired' || err.type === 'BusinessTypeNotMatch' ||
+        err.type === 'InsufficientBalance';
 
         if(verify) return res.status(401).send(err.message);
         if(err.type === 'EmployeeNotFound' || err.type === 'CompanyNotFound') return res.status(404).send(err.message);

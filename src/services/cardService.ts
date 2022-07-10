@@ -130,7 +130,7 @@ async function unlockCard(card: Card, password: string){
     await cardRepository.update(card.id, cardUnlock);
 }
 
-function verifyEqualityPassword(password: string, passwordDecrypted: string){
+export function verifyEqualityPassword(password: string, passwordDecrypted: string){
     if(password !== passwordDecrypted) throw{
         type: "InvalidPasswordCard",
         message: "Invalid password"
