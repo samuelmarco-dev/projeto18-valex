@@ -8,8 +8,8 @@ import * as paymentRepository from "../repositories/paymentRepository.js";
 import { Business } from "../repositories/businessRepository.js";
 import { Card } from "../repositories/cardRepository.js";
 import { Recharge } from '../repositories/rechargeRepository.js';
-import { PaymentInsertData } from "../repositories/paymentRepository.js";
-import { verifyEqualityPassword } from "./cardService.js";
+import { PaymentInsertData, PaymentWithBusinessName } from "../repositories/paymentRepository.js";
+import { calculeTotalCardBalance, verifyEqualityPassword } from "./cardService.js";
 
 async function createPayment(card: Card, business: Business, amount: number, password: string){
     const amountCent = amount * 100;
@@ -31,7 +31,9 @@ async function createPayment(card: Card, business: Business, amount: number, pas
     verifyEqualityPassword(password, passwordDecrypted);
 
     const allRecharges: Recharge[] = await rechargeRepository.findByCardId(card.id);
-    const balanceCard = calculateAvailableBalance(allRecharges, amountCent);
+    const allPayments: PaymentWithBusinessName[] = await paymentRepository.findByCardId(card.id);
+
+    const balanceCard = calculateAvailableBalance(allRecharges, amountCent, allPayments);
 
     if(balanceCard < 0) throw{
         type: "InsufficientBalance",
@@ -41,18 +43,15 @@ async function createPayment(card: Card, business: Business, amount: number, pas
     const objPayment: PaymentInsertData = {
         cardId: card.id,
         businessId: business.id,
-        amount: amount
+        amount: amountCent
     }
     await paymentRepository.insert(objPayment);
 }
 
-function calculateAvailableBalance(arrRecharges: any[], amount: number){
-    const availableBalance = arrRecharges.reduce((total: number, recharge) => {
-        return total + recharge.amount;
-    }, 0);
-    console.log(availableBalance, amount);
+function calculateAvailableBalance(arrRecharges: any[], amount: number, arrPayments: any[]) {
+    const availableBalance = calculeTotalCardBalance(arrPayments, arrRecharges);
 
-    return availableBalance - amount;
+    return (availableBalance) - amount;
 }
 
 const paymentService = {

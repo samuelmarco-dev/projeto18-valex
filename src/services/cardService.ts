@@ -167,7 +167,7 @@ async function getInformationDataOfCard(card: Card) {
     return dataCard;
 }
 
-function calculeTotalCardBalance(transactions: any[], recharges: any[]) {
+export function calculeTotalCardBalance(transactions: any[], recharges: any[]) {
     const spent: number = transactions.reduce((total: number, transaction: Payment) => {
         return total + transaction.amount;
     }, 0);
