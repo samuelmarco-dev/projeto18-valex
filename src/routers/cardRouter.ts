@@ -9,11 +9,13 @@ import schemaValidation from '../middlewares/schemaMiddleware.js';
 import schemaCreateCard from '../models/schemaCreateCard.js';
 import schemaActiveCard from '../models/schemaActiveCard.js';
 import schemaBlockUnblockCard from '../models/schemaBlockUnblock.js';
+import schemaInformationCard from '../models/schemaInformationCard.js';
 
 const cardRouter = Router();
 
 cardRouter.post('/card/create', schemaValidation(schemaCreateCard), checkUserExists, authKeyCompany, createCardWithApiKey);
 cardRouter.post('/card/active/:id', schemaValidation(schemaActiveCard), validateActiveCard, activeCardWithPassword);
+cardRouter.get('/cards/:employeeId', schemaValidation(schemaInformationCard), );
 /*ON HOLD:
     cardRouter.get('/cards/:employeeId', );
     FIXME: visualizar cartões do usuário, com falha de segurança até o momento...
