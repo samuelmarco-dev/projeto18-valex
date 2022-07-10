@@ -1,8 +1,8 @@
 import { Router } from 'express';
 
 import cardRouter from './cardRouter.js';
-import rechargeRouter from './rechargeRouter.js';
-import paymentRouter from './paymentRouter.js';
+import rechargeRouter from './paymentRouter.js';
+import paymentRouter from './rechargeRouter.js';
 
 const routesApp = Router();
 
