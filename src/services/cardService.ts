@@ -24,6 +24,7 @@ async function createCard(employee: Employee, type: TransactionTypes) {
     const dataCard = createDiceOfCard(id, fullName, type);
 
     await cardRepository.insert(dataCard);
+    return devolveCardCVV(dataCard.securityCode);
 }
 
 function createDiceOfCard(id: number, fullName: string, type: TransactionTypes) {
@@ -65,6 +66,13 @@ function generateHolderName(fullname: string){
         }
     }
     return holderName.join(' ');
+}
+
+function devolveCardCVV(code: string){
+    const cryptr = new Cryptr(process.env.CRYPTR_SECRET);
+    const cvv = cryptr.decrypt(code);
+
+    return cvv;
 }
 
 async function activePasswordCardId(card: Card, password: string, code: string) {

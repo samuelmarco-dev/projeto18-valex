@@ -9,8 +9,8 @@ export async function createCardWithApiKey(req: Request, res: Response){
 
     if(company.id !== employee.companyId) return res.status(401).send("Company not authorized to create card");
 
-    await cardService.createCard(employee, typeCard);
-    res.sendStatus(201);
+    const cvv = await cardService.createCard(employee, typeCard);
+    res.status(201).send(cvv);
 }
 
 export async function activeCardWithPassword(req: Request, res: Response){
