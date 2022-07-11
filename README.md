@@ -83,6 +83,9 @@ paymentRouter:
 rechargeRouter:
     POST: /recharge/:id
         - Rota para realizar uma recarga de cartão de benefício
+        - headers: {
+            "x-api-key": "api-key"
+        }
         - body: {
             "cardId": w,
             "amount": z (em centavos)
