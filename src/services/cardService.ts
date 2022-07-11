@@ -251,14 +251,21 @@ async function returnArrayOfUserCards(employee: Employee, arrRequest: any[]){
         verifyEqualityCVV(cvv, cvvDecrypted);
 
         arrFinally.push({
-            number: cardFound.number,
+            number: cardFound.number.split("-").join(" "),
             cardholderName: cardFound.cardholderName,
-            expirationDate: cardFound.expirationDate,
+            expirationDate: returnExpirationDateFormated(cardFound.expirationDate),
             securityCode: passwordDecrypted
         });
     }
 
     return arrFinally;
+}
+
+function returnExpirationDateFormated(expirationDate: string){
+    const arrSplit = expirationDate.split("/");
+    const arrFormat = [arrSplit[0], arrSplit[1].slice(2, 4)];
+
+    return arrFormat.join("/");
 }
 
 const cardService = {
