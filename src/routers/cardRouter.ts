@@ -16,13 +16,6 @@ const cardRouter = Router();
 cardRouter.post('/card/create', schemaValidation(schemaCreateCard), checkUserExists, authKeyCompany, createCardWithApiKey);
 cardRouter.post('/card/active/:id', schemaValidation(schemaActiveCard), validateActiveCard, activeCardWithPassword);
 cardRouter.get('/cards/:employeeId', schemaValidation(schemaInformationCard), checkUserExists, getInformationFromEachUserCard);
-/*ON HOLD:
-    cardRouter.get('/cards/:employeeId', );
-    FIXME: visualizar cartões do usuário, com falha de segurança até o momento...
-        - um usuário qualquer pode chutar senhas de outros usuários
-        - caso o usuário erre a senha de pelo menos 1 cartão, ainda pode visualizar os
-        cartões em que a senha está correta
-*/
 cardRouter.get('/card/balance/:id', authCardIsActive, getBalanceAndTransactions);
 cardRouter.put('/card/lock/:id', schemaValidation(schemaBlockUnblockCard), authCardIsActive, applyBlockCardId);
 cardRouter.put('/card/unlock/:id', schemaValidation(schemaBlockUnblockCard), authCardIsActive, applyUnlockCardId);
