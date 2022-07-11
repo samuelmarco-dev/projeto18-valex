@@ -73,8 +73,18 @@ cardRouter:
 paymentRouter:
     POST: /payment/:id
         - Rota para realizar um pagamento com cartão de benefício
+        - body: {
+            "cardId": w,
+            "password": "xxxx",
+            "businessesId": w,
+            "amount": z (em centavos)
+        }
 
 rechargeRouter:
     POST: /recharge/:id
         - Rota para realizar uma recarga de cartão de benefício
+        - body: {
+            "cardId": w,
+            "amount": z (em centavos)
+        }
 ```
