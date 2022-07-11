@@ -187,10 +187,78 @@ export function calculeTotalCardBalance(transactions: any[], recharges: any[]) {
 }
 
 async function getInformationCardWithSafety(allInformations: any[], employee: Employee) {
-    console.log('employee', employee);
-    console.log('array', allInformations);
+    validateCardTypesInArray(allInformations.map(item => item.type));
+    validateCardTypesInArray(allInformations.map(item => item.cardId));
 
-    return allInformations;
+    const numberCardsUser = await cardRepository.findCardsByEmployeeId(employee.id);
+    if(numberCardsUser.length !== allInformations.length) throw {
+        type: "InvalidNumberCards",
+        message: "Number of invalid cards"
+    }
+    if(!numberCardsUser.length) throw {
+        type: "NoCards",
+        message: "No cards"
+    }
+
+    return await returnArrayOfUserCards(employee, allInformations);
+}
+
+function validateCardTypesInArray(array: any[]){
+    for(let i = 0; i < array.length; i++){
+        for(let j = i + 1; j < array.length; j++){
+
+            if(array[i] === array[j]) throw {
+                type: "CardAlreadyExists",
+                message: "Card type or id already exists in the request"
+            }
+        }
+    }
+    return true;
+}
+
+function verifyEqualityCVV(cvv: string, cvvDecrypted: string){
+    if(cvv !== cvvDecrypted) throw{
+        type: "InvalidCVVCard",
+        message: "Invalid CVV"
+    }
+    return true;
+}
+
+async function returnArrayOfUserCards(employee: Employee, arrRequest: any[]){
+    const cryptr = new Cryptr(process.env.CRYPTR_SECRET);
+    const date = dayjs().format('MM/YYYY');
+    const arrFinally: any[] = [];
+
+    for(const card of arrRequest){
+        const { cardId, password, cvv, type }: {cardId: number, password: string, cvv: string, type: TransactionTypes} = card;
+        const cardFound: Card = await cardRepository.findById(cardId);
+
+        if(!cardFound) throw {
+            type: "CardNotFound",
+            message: "Card not found"
+        }
+
+        const verifyCard = !cardFound.password || cardFound.isBlocked || cardFound.type !== type || cardFound.id !== cardId;
+        if(verifyCard || cardFound.employeeId !== employee.id || date > cardFound.expirationDate) throw {
+            type: "InvalidCard",
+            message: "Invalid card"
+        }
+
+        const passwordDecrypted: string = cryptr.decrypt(cardFound.password);
+        verifyEqualityPassword(password, passwordDecrypted);
+
+        const cvvDecrypted: string = cryptr.decrypt(cardFound.securityCode);
+        verifyEqualityCVV(cvv, cvvDecrypted);
+
+        arrFinally.push({
+            number: cardFound.number,
+            cardholderName: cardFound.cardholderName,
+            expirationDate: cardFound.expirationDate,
+            securityCode: passwordDecrypted
+        });
+    }
+
+    return arrFinally;
 }
 
 const cardService = {

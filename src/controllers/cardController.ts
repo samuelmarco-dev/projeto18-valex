@@ -65,5 +65,7 @@ export async function getInformationFromEachUserCard(req: Request, res: Response
     if(employee.id !== Number(employeeId)) return res.status(401).send('Employee identifiers do not match');
 
     const cards = await cardService.getInformationCardWithSafety(passwords, employee);
-    res.status(200).send(cards);
+    res.status(200).send({
+        cards
+    });
 }

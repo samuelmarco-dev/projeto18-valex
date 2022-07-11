@@ -133,3 +133,11 @@ export async function findCardJoinEmployee(id: number){
 
     return result.rows[0];
 }
+
+export async function findCardsByEmployeeId(employeeId: number) {
+    const result = await connection.query(`
+        SELECT * FROM cards WHERE "employeeId" = $1 AND "password" IS NOT NULL
+    `, [employeeId]);
+
+    return result.rows;
+}
